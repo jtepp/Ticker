@@ -4,7 +4,7 @@
 
 #define NUM_LEDS 30
 #define NUM_STRIPS 5
-#define MSG_LENGTH 150
+#define MSG_LENGTH 250
 
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
@@ -20,6 +20,7 @@ CRGB on = CRGB(255,0,0);
 int useWifi = 1;
 int innerIndex = -1;
 int outerIndex = 0;
+int realLength = 0;
 
 char ssid[] = "TeppermanFamily";
 char pass[] = "0110202165";
@@ -80,6 +81,10 @@ void loop() {
           leds[outerIndex][innerIndex] = CRGB(0,0,0);
         }
           message[outerIndex][innerIndex] = CRGB(0,0,0);
+
+          if (outerIndex == 0) { //count length of actual line
+              realLength++;
+            }
         break;
 
         case '1':
@@ -100,7 +105,11 @@ void loop() {
         break;
       }
 
+
   }
+
+  Serial.println(realLength);
+  
   }
 
   scrub();
@@ -140,7 +149,7 @@ void fillLEDs(CRGB col) {
       for (int j=1; j<NUM_LEDS; j++) { // the LEDs move left
           leds[i][j-1] = leds[i][j];
         }
-        leds[i][NUM_LEDS-1] = message[i][counter % MSG_LENGTH]; // last led is first of past matrix
+        leds[i][NUM_LEDS-1] = message[i][counter % realLength]; // last led is first of past matrix
     }
     delay(1000/FPS);
   }
