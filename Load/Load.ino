@@ -129,7 +129,7 @@ if (run == 1) {
   counter++;
 
   if (millis() >= 60000 && millis() % 60000 < 100 ) { // past the first minute and within first 0.1s of minute
-      fillLEDs(CRGB(0,0,0));
+//      fillLEDs(CRGB(0,0,0));
       makeHTTPRequest("text", "NEWMESSAGE");
     }
 }
