@@ -8,14 +8,14 @@
 
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
-#define BRIGHTNESS 64
+#define BRIGHTNESS 100
 
 #define FPS 10
 
 CRGB leds[NUM_STRIPS][NUM_LEDS];
 CRGB message[NUM_STRIPS][MSG_LENGTH];
 
-CRGB on = CRGB(0,255,0);
+CRGB on = CRGB(255,0,0);
 
 int useWifi = 1;
 int innerIndex = -1;
@@ -56,7 +56,8 @@ void setup() {
  
 if (client.connect(server, 80)) {
     // Make a HTTP request:
-    client.println("GET /.netlify/functions/ticker?q=TOR:4-PHI:3%20OAK:6-TEX:6%20SD:3-COL:5%20 HTTP/1.1");
+//    client.println("GET /.netlify/functions/ticker?mode=text&q=TOR:4-PHI:3%20OAK:6-TEX:6%20SD:3-COL:5%20 HTTP/1.1");
+    client.println("GET /.netlify/functions/ticker?mode=stocks HTTP/1.1");
     client.println("Host: www.jacobtepperman.com");
     client.println("Connection: close");
     client.println();
