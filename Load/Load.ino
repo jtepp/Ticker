@@ -19,8 +19,8 @@ byte message[NUM_STRIPS][MSG_LENGTH];
 CRGB on = CRGB(255,0,0);
 
 int innerIndex = -1;
-unsigned int outerIndex = 0;
-unsigned int realLength = 0;
+int outerIndex = 0;
+int realLength = 0;
 
 bool run = true;
 bool canMakeRequest = true;
@@ -63,8 +63,9 @@ void loop() {
   if (run) {
 
   if (canMakeRequest) {
-      makeHTTPRequest("stocks","");
+//      makeHTTPRequest("stocks","");
 //    makeHTTPRequest("text","This%20was%20a%20great%20idea");
+      makeHTTPRequest("waves","");
     canMakeRequest = false;
   }
     
@@ -74,8 +75,14 @@ void loop() {
 
     char c = client.read();
 
-    if ((c == '0' || c == '1') && outerIndex == 0) { //count length of actual line
-              realLength++;
+    if (c == '0' || c == '1') { //count length of actual line
+              if (innerIndex>realLength && c == '1') {
+                realLength = innerIndex; // find the deepest '1'
+                }
+                if (innerIndex == 0) {
+                  Serial.println();
+                  }
+              Serial.print(c);
             }
 
     switch(c) {
@@ -106,6 +113,7 @@ void loop() {
 
 
   }
+  Serial.println('\n');
   Serial.println(realLength);
   
   }
@@ -131,8 +139,9 @@ if (run) {
 
   if (counter % min(realLength, MSG_LENGTH) == 0) { // at the start
       if (passThroughs == PT_REFRESH) {
-//        makeHTTPRequest("text", "NEWMESSAGE");
-        makeHTTPRequest("stocks","");
+//        makeHTTPRequest("text", "NEWMESSAGE");bo
+//        makeHTTPRequest("stocks","");
+          makeHTTPRequest("waves","");
         passThroughs = 0;
       }
       passThroughs++;
@@ -152,7 +161,7 @@ if (run) {
   void makeHTTPRequest(String mode, String q) {
     if (client.connect(server, 80)) {
       digitalWrite(LED_BUILTIN, HIGH);
-      fillLEDs();
+//      fillLEDs();
       innerIndex = -1;
       outerIndex = 0;
       realLength = 0;
