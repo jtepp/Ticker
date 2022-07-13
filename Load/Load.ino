@@ -2,7 +2,7 @@
 #include <WiFiNINA.h>
 #include <String.h>
 
-#define NUM_LEDS 300
+#define NUM_LEDS 50
 #define NUM_STRIPS 5
 #define MSG_LENGTH 200
 
@@ -29,7 +29,7 @@ char pass[] = "0110202165";
 
 int status = WL_IDLE_STATUS;
 unsigned int counter = 0;
-unsigned int passThroughs = 0;
+byte passThroughs = 0;
 
 char server[] = "www.jacobtepperman.com";
 
@@ -129,8 +129,9 @@ if (run) {
 
 
   if (counter % min(realLength, MSG_LENGTH) == 0) { // at the start
-      if (passThroughs % 5 == 0) {
+      if (passThroughs == 5) {
         makeHTTPRequest("text", "NEWMESSAGE");
+        passThroughs = 0;
       }
       passThroughs++;
     }
@@ -140,7 +141,7 @@ if (run) {
 void fillLEDs() {
   for (int i=0; i<NUM_STRIPS; i++) {
       for (int j=0; j<NUM_LEDS; j++) {
-          leds[i][j] = on;
+          leds[i][j] = 0;
       }
       for (int j=0; j<MSG_LENGTH; j++) {
           message[i][j] = 0;
