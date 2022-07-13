@@ -68,7 +68,44 @@ void loop() {
     canMakeRequest = 0;
   }
     
-  translateMessage();
+  // if there are incoming bytes available
+  // from the server, read them and print them:
+  while (client.available()) {
+
+    char c = client.read();
+
+    if ((c == '0' || c == '1') && outerIndex == 0) { //count length of actual line
+              realLength++;
+            }
+
+    switch(c) {
+        case '0': 
+//        if (innerIndex<NUM_LEDS) {
+//          leds[outerIndex][innerIndex] = CRGB(0,0,0);
+//        }
+          message[outerIndex][innerIndex] = CRGB(0,0,0);
+        break;
+
+        case '1':
+//        if (innerIndex<NUM_LEDS) {
+//          leds[outerIndex][innerIndex] = on;
+//        }
+          message[outerIndex][innerIndex] = on;
+        break;
+
+        case ',':
+          innerIndex++;
+//          innerIndex %= NUM_LEDS;
+        break;
+
+        case ']':
+          outerIndex++;
+          innerIndex = 0;
+        break;
+      }
+
+
+  }
   Serial.println(realLength);
   
   }
@@ -117,47 +154,6 @@ void fillLEDs(CRGB col) {
         leds[i][NUM_LEDS-1] = message[i][counter % realLength]; // last led is first of past matrix
     }
     delay(1000/FPS);
-  }
-
-  void translateMessage() {
-    // if there are incoming bytes available
-  // from the server, read them and print them:
-  while (client.available()) {
-
-    char c = client.read();
-
-    if ((c == '0' || c == '1') && outerIndex == 0) { //count length of actual line
-              realLength++;
-            }
-
-    switch(c) {
-        case '0': 
-//        if (innerIndex<NUM_LEDS) {
-//          leds[outerIndex][innerIndex] = CRGB(0,0,0);
-//        }
-          message[outerIndex][innerIndex] = CRGB(0,0,0);
-        break;
-
-        case '1':
-//        if (innerIndex<NUM_LEDS) {
-//          leds[outerIndex][innerIndex] = on;
-//        }
-          message[outerIndex][innerIndex] = on;
-        break;
-
-        case ',':
-          innerIndex++;
-//          innerIndex %= NUM_LEDS;
-        break;
-
-        case ']':
-          outerIndex++;
-          innerIndex = 0;
-        break;
-      }
-
-
-  }
   }
 
   void makeHTTPRequest(String mode, String q) {
