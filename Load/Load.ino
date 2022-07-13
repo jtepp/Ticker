@@ -36,11 +36,11 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
     fillLEDs(CRGB(0,0,0));
-     FastLED.addLeds<LED_TYPE, 8, COLOR_ORDER>(leds[0], NUM_LEDS).setCorrection( TypicalLEDStrip );
-     FastLED.addLeds<LED_TYPE, 7, COLOR_ORDER>(leds[1], NUM_LEDS).setCorrection( TypicalLEDStrip );
-     FastLED.addLeds<LED_TYPE, 5, COLOR_ORDER>(leds[2], NUM_LEDS).setCorrection( TypicalLEDStrip );
-     FastLED.addLeds<LED_TYPE, 4, COLOR_ORDER>(leds[3], NUM_LEDS).setCorrection( TypicalLEDStrip );
-     FastLED.addLeds<LED_TYPE, 3, COLOR_ORDER>(leds[4], NUM_LEDS).setCorrection( TypicalLEDStrip );
+     FastLED.addLeds<LED_TYPE, 13, COLOR_ORDER>(leds[0], NUM_LEDS).setCorrection( TypicalLEDStrip );
+     FastLED.addLeds<LED_TYPE, 12, COLOR_ORDER>(leds[1], NUM_LEDS).setCorrection( TypicalLEDStrip );
+     FastLED.addLeds<LED_TYPE, 11, COLOR_ORDER>(leds[2], NUM_LEDS).setCorrection( TypicalLEDStrip );
+     FastLED.addLeds<LED_TYPE, 10, COLOR_ORDER>(leds[3], NUM_LEDS).setCorrection( TypicalLEDStrip );
+     FastLED.addLeds<LED_TYPE, 6, COLOR_ORDER>(leds[4], NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.setBrightness(  BRIGHTNESS );
   FastLED.show();
   Serial.begin(9600);
