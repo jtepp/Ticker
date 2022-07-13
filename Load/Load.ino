@@ -23,6 +23,8 @@ int innerIndex = -1;
 int outerIndex = 0;
 int realLength = 0;
 
+int canMakeRequest = 1;
+
 char ssid[] = "TeppermanFamily";
 char pass[] = "0110202165";
 
@@ -55,12 +57,17 @@ void setup() {
   }
   
   Serial.println("Connected to wifi");
- 
-  makeHTTPRequest("stocks","");
 }
 
 void loop() {
   if (run == 1) {
+
+  if (canMakeRequest == 1) {
+    //  makeHTTPRequest("stocks","");
+    makeHTTPRequest("text","Surely%20this%20message%20is%20long%20enough");
+    canMakeRequest = 0;
+  }
+    
   // if there are incoming bytes available
   // from the server, read them and print them:
   while (client.available()) {
@@ -99,7 +106,6 @@ void loop() {
 
 
   }
-
   Serial.println(realLength);
   
   }
@@ -121,6 +127,10 @@ if (run == 1) {
 }
 
   counter++;
+
+  if (millis() > 40000 && millis() < 40100) {
+      makeHTTPRequest("text", "NEWMESSAGE");
+    }
 }
 
 
@@ -148,6 +158,10 @@ void fillLEDs(CRGB col) {
 
   void makeHTTPRequest(String mode, String q) {
     if (client.connect(server, 80)) {
+      digitalWrite(LED_BUILTIN, HIGH);
+      innerIndex = -1;
+      outerIndex = 0;
+      run = 1;
     // Make a HTTP request:
 //    client.println("GET /.netlify/functions/ticker?mode=text&q=TOR:4-PHI:3%20OAK:6-TEX:6%20SD:3-COL:5%20 HTTP/1.1");
     String intro = "GET /.netlify/functions/ticker?mode=";
