@@ -10,6 +10,7 @@
 #define COLOR_ORDER GRB
 #define BRIGHTNESS 100
 
+#define PT_REFRESH 4
 #define FPS 10
 
 CRGB leds[NUM_STRIPS][NUM_LEDS];
@@ -28,7 +29,7 @@ char ssid[] = "TeppermanFamily";
 char pass[] = "0110202165";
 
 int status = WL_IDLE_STATUS;
-unsigned int counter = 0;
+int counter = 0;
 byte passThroughs = 0;
 
 char server[] = "www.jacobtepperman.com";
@@ -62,8 +63,8 @@ void loop() {
   if (run) {
 
   if (canMakeRequest) {
-    //  makeHTTPRequest("stocks","");
-    makeHTTPRequest("text","This%20was%20a%20great%20idea");
+      makeHTTPRequest("stocks","");
+//    makeHTTPRequest("text","This%20was%20a%20great%20idea");
     canMakeRequest = false;
   }
     
@@ -129,8 +130,9 @@ if (run) {
 
 
   if (counter % min(realLength, MSG_LENGTH) == 0) { // at the start
-      if (passThroughs == 3) {
-        makeHTTPRequest("text", "NEWMESSAGE");
+      if (passThroughs == PT_REFRESH) {
+//        makeHTTPRequest("text", "NEWMESSAGE");
+        makeHTTPRequest("stocks","");
         passThroughs = 0;
       }
       passThroughs++;
