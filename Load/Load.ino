@@ -4,7 +4,7 @@
 
 #define NUM_LEDS 30
 #define NUM_STRIPS 5
-#define MSG_LENGTH 30
+#define MSG_LENGTH 50
 
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
@@ -24,7 +24,7 @@ char pass[] = "0110202165";
 
 int status = WL_IDLE_STATUS;
 int run = 1;
-int counter = 0;
+int counter = NUM_LEDS;
 
 char server[] = "www.jacobtepperman.com";
 
@@ -33,7 +33,7 @@ WiFiClient client;
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
-    fillLEDs(0, CRGB(0,0,0));
+    fillLEDs(CRGB(0,0,0));
      FastLED.addLeds<LED_TYPE, 8, COLOR_ORDER>(leds[0], NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.addLeds<LED_TYPE, 7, COLOR_ORDER>(leds[1], NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.addLeds<LED_TYPE, 5, COLOR_ORDER>(leds[2], NUM_LEDS).setCorrection( TypicalLEDStrip );
@@ -54,7 +54,7 @@ void setup() {
  
 if (client.connect(server, 80)) {
     // Make a HTTP request:
-    client.println("GET /.netlify/functions/ticker?q=A B C HTTP/1.1");
+    client.println("GET /.netlify/functions/ticker?q=ABCDEFG HTTP/1.1");
     client.println("Host: www.jacobtepperman.com");
     client.println("Connection: close");
     client.println();
@@ -73,12 +73,16 @@ void loop() {
 
     switch(c) {
         case '0': 
+        if (innerIndex<NUM_LEDS) {
           leds[outerIndex][innerIndex] = CRGB(0,0,0);
+        }
           message[outerIndex][innerIndex] = CRGB(0,0,0);
         break;
 
         case '1':
+        if (innerIndex<NUM_LEDS) {
           leds[outerIndex][innerIndex] = on;
+        }
           message[outerIndex][innerIndex] = on;
         break;
 
@@ -116,12 +120,12 @@ if (run == 1 & useWifi == 1) {
 }
 
 
-void fillLEDs(int offset, CRGB col) {
+void fillLEDs(CRGB col) {
   for (int i=0; i<NUM_STRIPS; i++) {
-      for (int j=offset; j<NUM_LEDS; j++) {
+      for (int j=0; j<NUM_LEDS; j++) {
           leds[i][j] = col;
-        }
-        for (int j=offset; j<MSG_LENGTH; j++) {
+      }
+      for (int j=0; j<MSG_LENGTH; j++) {
           message[i][j] = col;
         }
     }
@@ -130,10 +134,10 @@ void fillLEDs(int offset, CRGB col) {
 
   void scrub() {
     for (int i=0; i<NUM_STRIPS; i++) {
-      for (int j=1; j<NUM_LEDS; j++) { 
+      for (int j=1; j<NUM_LEDS; j++) { // the LEDs move left
           leds[i][j-1] = leds[i][j];
         }
-        leds[i][NUM_LEDS-1] = message[i][counter % MSG_LENGTH]; 
+        leds[i][NUM_LEDS-1] = message[i][counter % MSG_LENGTH]; // last led is first of past matrix
     }
-    delay(300);
+    delay(200);
   }
