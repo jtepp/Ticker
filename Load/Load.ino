@@ -68,44 +68,7 @@ void loop() {
     canMakeRequest = 0;
   }
     
-  // if there are incoming bytes available
-  // from the server, read them and print them:
-  while (client.available()) {
-
-    char c = client.read();
-
-    if ((c == '0' || c == '1') && outerIndex == 0) { //count length of actual line
-              realLength++;
-            }
-
-    switch(c) {
-        case '0': 
-//        if (innerIndex<NUM_LEDS) {
-//          leds[outerIndex][innerIndex] = CRGB(0,0,0);
-//        }
-          message[outerIndex][innerIndex] = CRGB(0,0,0);
-        break;
-
-        case '1':
-//        if (innerIndex<NUM_LEDS) {
-//          leds[outerIndex][innerIndex] = on;
-//        }
-          message[outerIndex][innerIndex] = on;
-        break;
-
-        case ',':
-          innerIndex++;
-//          innerIndex %= NUM_LEDS;
-        break;
-
-        case ']':
-          outerIndex++;
-          innerIndex = 0;
-        break;
-      }
-
-
-  }
+  translateMessage();
   Serial.println(realLength);
   
   }
@@ -156,11 +119,54 @@ void fillLEDs(CRGB col) {
     delay(1000/FPS);
   }
 
+  void translateMessage() {
+    // if there are incoming bytes available
+  // from the server, read them and print them:
+  while (client.available()) {
+
+    char c = client.read();
+
+    if ((c == '0' || c == '1') && outerIndex == 0) { //count length of actual line
+              realLength++;
+            }
+
+    switch(c) {
+        case '0': 
+//        if (innerIndex<NUM_LEDS) {
+//          leds[outerIndex][innerIndex] = CRGB(0,0,0);
+//        }
+          message[outerIndex][innerIndex] = CRGB(0,0,0);
+        break;
+
+        case '1':
+//        if (innerIndex<NUM_LEDS) {
+//          leds[outerIndex][innerIndex] = on;
+//        }
+          message[outerIndex][innerIndex] = on;
+        break;
+
+        case ',':
+          innerIndex++;
+//          innerIndex %= NUM_LEDS;
+        break;
+
+        case ']':
+          outerIndex++;
+          innerIndex = 0;
+        break;
+      }
+
+
+  }
+  }
+
   void makeHTTPRequest(String mode, String q) {
     if (client.connect(server, 80)) {
       digitalWrite(LED_BUILTIN, HIGH);
+      fillLEDs(CRGB(0,0,0));
       innerIndex = -1;
       outerIndex = 0;
+      realLength = 0;
       run = 1;
     // Make a HTTP request:
 //    client.println("GET /.netlify/functions/ticker?mode=text&q=TOR:4-PHI:3%20OAK:6-TEX:6%20SD:3-COL:5%20 HTTP/1.1");
