@@ -1,11 +1,10 @@
 #include <FastLED.h>
 #include <WiFiNINA.h>
-#include <SPI.h>
 #include <String.h>
 
-#define NUM_LEDS 30
+#define NUM_LEDS 50
 #define NUM_STRIPS 5
-#define MSG_LENGTH 300
+#define MSG_LENGTH 200
 
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
@@ -31,6 +30,7 @@ char pass[] = "0110202165";
 int status = WL_IDLE_STATUS;
 int run = 1;
 int counter = 0;
+int passThroughs = 0;
 
 char server[] = "www.jacobtepperman.com";
 
@@ -64,7 +64,7 @@ void loop() {
 
   if (canMakeRequest == 1) {
     //  makeHTTPRequest("stocks","");
-    makeHTTPRequest("text","Surely%20this%20message%20is%20long%20enough");
+    makeHTTPRequest("text","This%20was%20a%20great%20idea");
     canMakeRequest = 0;
   }
     
@@ -128,9 +128,12 @@ if (run == 1) {
 
   counter++;
 
-  if (millis() >= 60000 && millis() % 60000 < 100 ) { // past the first minute and within first 0.1s of minute
-//      fillLEDs(CRGB(0,0,0));
-      makeHTTPRequest("text", "NEWMESSAGE");
+
+  if (counter % min(realLength, MSG_LENGTH) == 0 && p) { // at the start
+      if (passThroughs % 5 == 0) {
+        makeHTTPRequest("text", "NEWMESSAGE");
+      }
+      passThroughs++;
     }
 }
 
@@ -152,7 +155,7 @@ void fillLEDs(CRGB col) {
       for (int j=1; j<NUM_LEDS; j++) { // the LEDs move left
           leds[i][j-1] = leds[i][j];
         }
-        leds[i][NUM_LEDS-1] = message[i][counter % realLength]; // last led is first of past matrix
+        leds[i][NUM_LEDS-1] = message[i][counter % min(realLength, MSG_LENGTH)]; // last led is first of past matrix
     }
     delay(1000/FPS);
   }
