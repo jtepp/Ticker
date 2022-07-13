@@ -1,10 +1,11 @@
 #include <FastLED.h>
 #include <WiFiNINA.h>
 #include <SPI.h>
+#include <String.h>
 
 #define NUM_LEDS 30
 #define NUM_STRIPS 5
-#define MSG_LENGTH 250
+#define MSG_LENGTH 300
 
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
@@ -45,7 +46,7 @@ void setup() {
      FastLED.setBrightness(  BRIGHTNESS );
   FastLED.show();
   Serial.begin(9600);
-  if (useWifi == 1) {
+
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(ssid);
@@ -55,25 +56,20 @@ void setup() {
   
   Serial.println("Connected to wifi");
  
-if (client.connect(server, 80)) {
-    // Make a HTTP request:
-//    client.println("GET /.netlify/functions/ticker?mode=text&q=TOR:4-PHI:3%20OAK:6-TEX:6%20SD:3-COL:5%20 HTTP/1.1");
-    client.println("GET /.netlify/functions/ticker?mode=stocks HTTP/1.1");
-    client.println("Host: www.jacobtepperman.com");
-    client.println("Connection: close");
-    client.println();
-    digitalWrite(LED_BUILTIN, LOW);
-  }
-  }
+  makeHTTPRequest("stocks","");
 }
 
 void loop() {
-  if (run == 1 && useWifi == 1) {
+  if (run == 1) {
   // if there are incoming bytes available
   // from the server, read them and print them:
   while (client.available()) {
 
     char c = client.read();
+
+    if ((c == '0' || c == '1') && outerIndex == 0) { //count length of actual line
+              realLength++;
+            }
 
     switch(c) {
         case '0': 
@@ -81,10 +77,6 @@ void loop() {
           leds[outerIndex][innerIndex] = CRGB(0,0,0);
         }
           message[outerIndex][innerIndex] = CRGB(0,0,0);
-
-          if (outerIndex == 0) { //count length of actual line
-              realLength++;
-            }
         break;
 
         case '1':
@@ -116,7 +108,7 @@ void loop() {
   FastLED.show();
 
   
-if (run == 1 & useWifi == 1) {
+if (run == 1) {
   // if the server's disconnected, stop the client:
   if (!client.connected()) {
     Serial.println();
@@ -153,3 +145,19 @@ void fillLEDs(CRGB col) {
     }
     delay(1000/FPS);
   }
+
+  void makeHTTPRequest(String mode, String q) {
+    if (client.connect(server, 80)) {
+    // Make a HTTP request:
+//    client.println("GET /.netlify/functions/ticker?mode=text&q=TOR:4-PHI:3%20OAK:6-TEX:6%20SD:3-COL:5%20 HTTP/1.1");
+    String intro = "GET /.netlify/functions/ticker?mode=";
+    String query = "&q=";
+    String outro = " HTTP/1.1";
+    String requestString = intro + mode + query + q + outro;
+    client.println(requestString);
+    client.println("Host: www.jacobtepperman.com");
+    client.println("Connection: close");
+    client.println();
+    digitalWrite(LED_BUILTIN, LOW);
+  }
+    }
