@@ -17,18 +17,17 @@ CRGB message[NUM_STRIPS][MSG_LENGTH];
 
 CRGB on = CRGB(255,0,0);
 
-int useWifi = 1;
 int innerIndex = -1;
 int outerIndex = 0;
 int realLength = 0;
 
-int canMakeRequest = 1;
+bool run = true;
+bool canMakeRequest = true;
 
 char ssid[] = "TeppermanFamily";
 char pass[] = "0110202165";
 
 int status = WL_IDLE_STATUS;
-int run = 1;
 int counter = 0;
 int passThroughs = 0;
 
@@ -60,12 +59,12 @@ void setup() {
 }
 
 void loop() {
-  if (run == 1) {
+  if (run) {
 
-  if (canMakeRequest == 1) {
+  if (canMakeRequest) {
     //  makeHTTPRequest("stocks","");
     makeHTTPRequest("text","This%20was%20a%20great%20idea");
-    canMakeRequest = 0;
+    canMakeRequest = false;
   }
     
   // if there are incoming bytes available
@@ -114,14 +113,14 @@ void loop() {
   FastLED.show();
 
   
-if (run == 1) {
+if (run) {
   // if the server's disconnected, stop the client:
   if (!client.connected()) {
     Serial.println();
     Serial.println("disconnecting from server.");
     client.stop();
     // do nothing forevermore:
-    run = 0;
+    run = false;
     
   }
 }
@@ -129,7 +128,7 @@ if (run == 1) {
   counter++;
 
 
-  if (counter % min(realLength, MSG_LENGTH) == 0 && p) { // at the start
+  if (counter % min(realLength, MSG_LENGTH) == 0) { // at the start
       if (passThroughs % 5 == 0) {
         makeHTTPRequest("text", "NEWMESSAGE");
       }
@@ -166,7 +165,7 @@ void fillLEDs(CRGB col) {
       innerIndex = -1;
       outerIndex = 0;
       realLength = 0;
-      run = 1;
+      run = true;
     // Make a HTTP request:
 //    client.println("GET /.netlify/functions/ticker?mode=text&q=TOR:4-PHI:3%20OAK:6-TEX:6%20SD:3-COL:5%20 HTTP/1.1");
     String intro = "GET /.netlify/functions/ticker?mode=";
