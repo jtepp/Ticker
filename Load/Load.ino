@@ -2,7 +2,7 @@
 #include <WiFiNINA.h>
 #include <String.h>
 
-#define NUM_LEDS 50
+#define NUM_LEDS 300
 #define NUM_STRIPS 5
 #define MSG_LENGTH 200
 
@@ -13,13 +13,13 @@
 #define FPS 10
 
 CRGB leds[NUM_STRIPS][NUM_LEDS];
-CRGB message[NUM_STRIPS][MSG_LENGTH];
+byte message[NUM_STRIPS][MSG_LENGTH];
 
 CRGB on = CRGB(255,0,0);
 
 int innerIndex = -1;
-int outerIndex = 0;
-int realLength = 0;
+unsigned int outerIndex = 0;
+unsigned int realLength = 0;
 
 bool run = true;
 bool canMakeRequest = true;
@@ -28,8 +28,8 @@ char ssid[] = "TeppermanFamily";
 char pass[] = "0110202165";
 
 int status = WL_IDLE_STATUS;
-int counter = 0;
-int passThroughs = 0;
+unsigned int counter = 0;
+unsigned int passThroughs = 0;
 
 char server[] = "www.jacobtepperman.com";
 
@@ -38,7 +38,7 @@ WiFiClient client;
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
-    fillLEDs(CRGB(0,0,0));
+    fillLEDs();
      FastLED.addLeds<LED_TYPE, 13, COLOR_ORDER>(leds[0], NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.addLeds<LED_TYPE, 12, COLOR_ORDER>(leds[1], NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.addLeds<LED_TYPE, 11, COLOR_ORDER>(leds[2], NUM_LEDS).setCorrection( TypicalLEDStrip );
@@ -82,14 +82,14 @@ void loop() {
 //        if (innerIndex<NUM_LEDS) {
 //          leds[outerIndex][innerIndex] = CRGB(0,0,0);
 //        }
-          message[outerIndex][innerIndex] = CRGB(0,0,0);
+          message[outerIndex][innerIndex] = 0;
         break;
 
         case '1':
 //        if (innerIndex<NUM_LEDS) {
 //          leds[outerIndex][innerIndex] = on;
 //        }
-          message[outerIndex][innerIndex] = on;
+          message[outerIndex][innerIndex] = 1;
         break;
 
         case ',':
@@ -137,13 +137,13 @@ if (run) {
 }
 
 
-void fillLEDs(CRGB col) {
+void fillLEDs() {
   for (int i=0; i<NUM_STRIPS; i++) {
       for (int j=0; j<NUM_LEDS; j++) {
-          leds[i][j] = col;
+          leds[i][j] = on;
       }
       for (int j=0; j<MSG_LENGTH; j++) {
-          message[i][j] = col;
+          message[i][j] = 0;
         }
     }
   }
@@ -154,7 +154,7 @@ void fillLEDs(CRGB col) {
       for (int j=1; j<NUM_LEDS; j++) { // the LEDs move left
           leds[i][j-1] = leds[i][j];
         }
-        leds[i][NUM_LEDS-1] = message[i][counter % min(realLength, MSG_LENGTH)]; // last led is first of past matrix
+        leds[i][NUM_LEDS-1] = message[i][counter % min(realLength, MSG_LENGTH)] == 0 ? CRGB(0,0,0) : on; // last led is first of past matrix
     }
     delay(1000/FPS);
   }
