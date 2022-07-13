@@ -129,26 +129,13 @@ if (run) {
 
 
   if (counter % min(realLength, MSG_LENGTH) == 0) { // at the start
-      if (passThroughs == 5) {
+      if (passThroughs == 3) {
         makeHTTPRequest("text", "NEWMESSAGE");
         passThroughs = 0;
       }
       passThroughs++;
     }
 }
-
-
-void fillLEDs() {
-  for (int i=0; i<NUM_STRIPS; i++) {
-      for (int j=0; j<NUM_LEDS; j++) {
-          leds[i][j] = 0;
-      }
-      for (int j=0; j<MSG_LENGTH; j++) {
-          message[i][j] = 0;
-        }
-    }
-  }
-
 
   void scrub() {
     for (int i=0; i<NUM_STRIPS; i++) {
@@ -163,6 +150,7 @@ void fillLEDs() {
   void makeHTTPRequest(String mode, String q) {
     if (client.connect(server, 80)) {
       digitalWrite(LED_BUILTIN, HIGH);
+      fillLEDs();
       innerIndex = -1;
       outerIndex = 0;
       realLength = 0;
@@ -180,3 +168,15 @@ void fillLEDs() {
     digitalWrite(LED_BUILTIN, LOW);
   }
     }
+
+    
+void fillLEDs() {
+  for (int i=0; i<NUM_STRIPS; i++) {
+      for (int j=0; j<NUM_LEDS; j++) {
+          leds[i][j] = 0;
+      }
+      for (int j=0; j<MSG_LENGTH; j++) {
+          message[i][j] = 0;
+        }
+    }
+  }
