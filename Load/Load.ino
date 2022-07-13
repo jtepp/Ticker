@@ -30,7 +30,7 @@ char pass[] = "0110202165";
 
 int status = WL_IDLE_STATUS;
 int run = 1;
-int counter = NUM_LEDS;
+int counter = 0;
 
 char server[] = "www.jacobtepperman.com";
 
@@ -80,16 +80,16 @@ void loop() {
 
     switch(c) {
         case '0': 
-        if (innerIndex<NUM_LEDS) {
-          leds[outerIndex][innerIndex] = CRGB(0,0,0);
-        }
+//        if (innerIndex<NUM_LEDS) {
+//          leds[outerIndex][innerIndex] = CRGB(0,0,0);
+//        }
           message[outerIndex][innerIndex] = CRGB(0,0,0);
         break;
 
         case '1':
-        if (innerIndex<NUM_LEDS) {
-          leds[outerIndex][innerIndex] = on;
-        }
+//        if (innerIndex<NUM_LEDS) {
+//          leds[outerIndex][innerIndex] = on;
+//        }
           message[outerIndex][innerIndex] = on;
         break;
 
@@ -128,7 +128,7 @@ if (run == 1) {
 
   counter++;
 
-  if (millis() > 40000 && millis() < 40100) {
+  if (millis() >= 60000 && millis() % 60000 < 100 ) { // past the first minute and within first 0.1s of minute
       makeHTTPRequest("text", "NEWMESSAGE");
     }
 }
