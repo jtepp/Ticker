@@ -129,6 +129,7 @@ if (run == 1) {
   counter++;
 
   if (millis() >= 60000 && millis() % 60000 < 100 ) { // past the first minute and within first 0.1s of minute
+      fillLEDs(CRGB(0,0,0));
       makeHTTPRequest("text", "NEWMESSAGE");
     }
 }
@@ -159,7 +160,6 @@ void fillLEDs(CRGB col) {
   void makeHTTPRequest(String mode, String q) {
     if (client.connect(server, 80)) {
       digitalWrite(LED_BUILTIN, HIGH);
-      fillLEDs(CRGB(0,0,0));
       innerIndex = -1;
       outerIndex = 0;
       realLength = 0;
