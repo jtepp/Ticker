@@ -4,11 +4,13 @@
 
 #define NUM_LEDS 30
 #define NUM_STRIPS 5
-#define MSG_LENGTH 50
+#define MSG_LENGTH 150
 
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
 #define BRIGHTNESS 64
+
+#define FPS 10
 
 CRGB leds[NUM_STRIPS][NUM_LEDS];
 CRGB message[NUM_STRIPS][MSG_LENGTH];
@@ -54,7 +56,7 @@ void setup() {
  
 if (client.connect(server, 80)) {
     // Make a HTTP request:
-    client.println("GET /.netlify/functions/ticker?q=ABCDEFG HTTP/1.1");
+    client.println("GET /.netlify/functions/ticker?q=TOR:4-PHI:3%20OAK:6-TEX:6%20SD:3-COL:5%20 HTTP/1.1");
     client.println("Host: www.jacobtepperman.com");
     client.println("Connection: close");
     client.println();
@@ -139,5 +141,5 @@ void fillLEDs(CRGB col) {
         }
         leds[i][NUM_LEDS-1] = message[i][counter % MSG_LENGTH]; // last led is first of past matrix
     }
-    delay(200);
+    delay(1000/FPS);
   }
