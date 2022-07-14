@@ -2,21 +2,28 @@
 #include <WiFiNINA.h>
 #include <String.h>
 
-#define NUM_LEDS 50
+#define NUM_LEDS 100
 #define NUM_STRIPS 5
 #define MSG_LENGTH 200
 
+#define PT_REFRESH 4
+#define FPS 15
+
+
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
-#define BRIGHTNESS 100
+#define BRIGHTNESS 60
 
-#define PT_REFRESH 4
-#define FPS 10
+CRGB on = CRGB::Green;
+
+bool refresh = false;
+
+
+
 
 CRGB leds[NUM_STRIPS][NUM_LEDS];
 byte message[NUM_STRIPS][MSG_LENGTH];
 
-CRGB on = CRGB(255,0,0);
 
 int innerIndex = -1;
 int outerIndex = 0;
@@ -64,8 +71,9 @@ void loop() {
 
   if (canMakeRequest) {
 //      makeHTTPRequest("stocks","");
-//    makeHTTPRequest("text","This%20was%20a%20great%20idea");
-      makeHTTPRequest("waves","");
+    makeHTTPRequest("text","This%20was%20a%20great%20idea");
+//      makeHTTPRequest("waves","");
+//      makeHTTPRequest("text","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     canMakeRequest = false;
   }
     
@@ -79,10 +87,10 @@ void loop() {
               if (innerIndex>realLength && c == '1') {
                 realLength = innerIndex; // find the deepest '1'
                 }
-                if (innerIndex == 0) {
-                  Serial.println();
-                  }
-              Serial.print(c);
+//                if (innerIndex == 0) {
+//                  Serial.println();
+//                  }
+//              Serial.print(c);
             }
 
     switch(c) {
@@ -111,10 +119,11 @@ void loop() {
         break;
       }
 
+  
 
   }
-  Serial.println('\n');
-  Serial.println(realLength);
+//  Serial.println('\n');
+//  Serial.println(realLength);
   
   }
 
@@ -137,11 +146,11 @@ if (run) {
   counter++;
 
 
-  if (counter % min(realLength, MSG_LENGTH) == 0) { // at the start
+  if (counter % min(realLength, MSG_LENGTH) == 0 && refresh) { // at the start
       if (passThroughs == PT_REFRESH) {
-//        makeHTTPRequest("text", "NEWMESSAGE");bo
+        makeHTTPRequest("text", "NEW MESSAGE");
 //        makeHTTPRequest("stocks","");
-          makeHTTPRequest("waves","");
+//          makeHTTPRequest("waves","");
         passThroughs = 0;
       }
       passThroughs++;
