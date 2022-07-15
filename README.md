@@ -19,13 +19,13 @@ Fix: Unplug all the wires running from the Arduino to the LEDs. Unplug the Ardui
 Next time: Unplug the Arduino <-> LED power wires before you disconnect the entire Arduino from power.
 
 Error: `something something exceeded memory`
-Cause: You tried using too many LEDs and too many maximum characters in the message for the LEDs tiny memory capabilities. The NUM_LEDs constant will have the biggest effect on this as each increase of 1 will take up about 0.25% of the dynamic memory.
-Fix: Decrease NUM_LEDs and/or MSG_LENGTH.
+Cause: You tried using too many LEDs and too many maximum characters in the message for the LEDs tiny memory capabilities. The NUM_LEDS constant will have the biggest effect on this as each increase of 1 will take up about 0.25% of the dynamic memory.
+Fix: Decrease NUM_LEDS and/or MSG_LENGTH.
 Next time: Send Arduino an angry letter asking why they gave you the lowest amount of memory you'll ever encounter.
 
 Error: repeated `Attempting to connect to SSID`
 Cause: The LED strips used too much power and didn't leave enough power for the WiFi chip to be able to find a network.
-Fix: Lower NUM_LEDs so that each strip powers less LEDs and uses less power.
+Fix: Lower NUM_LEDS so that each strip powers less LEDs and uses less power.
 Next time: Use the 3.3V pin instead of the 5V pin. This will result in darker lights, but you can try a higher BRIGHTNESS constant value. Buy a power adaptor. Arduino recommends a 7-12V input, and I would recommend around 60W for a 200*5 LED ticker. (W = V*A so 60W @ 12V = 5A)
 
 Error: something else
