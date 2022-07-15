@@ -10,6 +10,17 @@
  * can be set to show static text or use a preset
  * mode on the text conversion server
  * 
+ * 
+ * OPERATION:
+ * By this point you should already have the Arduino
+ * plugged into your computer and know how to upload
+ * a program. If you need help with that, just google
+ * it. For configuring your preferences, read the
+ * below sections SERVER MODES, CONSTANTS, and 
+ * IMPORTANT VARIABLES, and change any of those values
+ * to make the ticker display whatever you desire.
+ * 
+ * 
  * SERVER MODES:
  * - text:
  *   pass a q value of your custom text
@@ -37,6 +48,12 @@
  *
  * - BRIGHTNESS: brightness of the LEDs
  * 
+ * - MODE: The desired server mode. Options are listed above the CONSTANTS section
+ * 
+ * - Q: The query for the server. Has different effects depending on the server mode.
+ *      Make sure all spaces are replaced with %20. For other URL sensitive characters/
+ *      symbols, just google [symbol name] URL-encoded
+ * 
  * IMPORTANT VARIABLES:
  * - on: the color you want the message to be shown in
  * 
@@ -44,6 +61,8 @@
  */
 
 #define MSG_LENGTH 200
+#define LED_TYPE    WS2812
+#define COLOR_ORDER GRB
  
 #define NUM_LEDS 100
 #define NUM_STRIPS 5
@@ -51,9 +70,10 @@
 #define PT_REFRESH 4
 #define FPS 15
 #define BRIGHTNESS 60
+#define MODE "text"
+#define Q "This%20was%20a%20great%20idea"
 
-#define LED_TYPE    WS2812
-#define COLOR_ORDER GRB
+
 
 CRGB on = CRGB::Green;
 
@@ -83,7 +103,6 @@ WiFiClient client;
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
-    fillLEDs();
      FastLED.addLeds<LED_TYPE, 13, COLOR_ORDER>(leds[0], NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.addLeds<LED_TYPE, 12, COLOR_ORDER>(leds[1], NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.addLeds<LED_TYPE, 11, COLOR_ORDER>(leds[2], NUM_LEDS).setCorrection( TypicalLEDStrip );
@@ -121,32 +140,18 @@ void loop() {
               if (innerIndex>realLength && c == '1') {
                 realLength = innerIndex; // find the deepest '1'
                 }
-//                if (innerIndex == 0) {
-//                  Serial.println();
-//                  }
-//              Serial.print(c);
-            }
 
     switch(c) {
         case '0': 
-//        if (innerIndex<NUM_LEDS) {
-//          leds[outerIndex][innerIndex] = CRGB(0,0,0);
-//        }
+
           message[outerIndex][innerIndex] = 0;
         break;
-
         case '1':
-//        if (innerIndex<NUM_LEDS) {
-//          leds[outerIndex][innerIndex] = on;
-//        }
           message[outerIndex][innerIndex] = 1;
         break;
-
         case ',':
           innerIndex++;
-//          innerIndex %= NUM_LEDS;
         break;
-
         case ']':
           outerIndex++;
           innerIndex = 0;
@@ -156,12 +161,10 @@ void loop() {
   
 
   }
-//  Serial.println('\n');
-//  Serial.println(realLength);
   
   }
 
-  scrub();
+  scroll();
   FastLED.show();
 
   
@@ -180,7 +183,7 @@ if (run) {
   counter++;
 
 
-  if (counter % min(realLength, MSG_LENGTH) == 0 && refresh) { // at the start
+  if (counter % min(realLength, MSG_LENGTH) == 0 && refresh) { // at each start
       if (passThroughs == PT_REFRESH) {
         action();
         passThroughs = 0;
@@ -189,16 +192,16 @@ if (run) {
     }
 }
 
-
+}
   void action() {
     //      makeHTTPRequest("stocks","GME,TSLA,TLRY");
-    makeHTTPRequest("text","This%20was%20a%20great%20idea");
+    makeHTTPRequest(MODE,Q);
 //      makeHTTPRequest("waves","");
 //      makeHTTPRequest("text","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 }
 
 
-  void scrub() {
+  void scroll() {
     for (int i=0; i<NUM_STRIPS; i++) {
       for (int j=1; j<NUM_LEDS; j++) { // the LEDs move left
           leds[i][j-1] = leds[i][j];
@@ -211,13 +214,11 @@ if (run) {
   void makeHTTPRequest(String mode, String q) {
     if (client.connect(server, 80)) {
       digitalWrite(LED_BUILTIN, HIGH);
-//      fillLEDs();
       innerIndex = -1;
       outerIndex = 0;
       realLength = 0;
       run = true;
-    // Make a HTTP request:
-//    client.println("GET /.netlify/functions/ticker?mode=text&q=TOR:4-PHI:3%20OAK:6-TEX:6%20SD:3-COL:5%20 HTTP/1.1");
+
     String intro = "GET /.netlify/functions/ticker?mode=";
     String query = "&q=";
     String outro = " HTTP/1.1";
