@@ -31,7 +31,7 @@ Next time: Use the 3.3V pin instead of the 5V pin. This will result in darker li
 Error: won't compile when adding more than one LED strip
 Cause: Honestly no idea, maybe the same thing as the first error
 Fix: Not sure... maybe try same solution as the first error, and also try compiling with a low NUM_LEDS and compiling with/without the Arduino plugged in
-Next time: See if your code compiles in the Arduino Web IDE. If it does, try the above fix(es) and leave the Arduino unplugged for a while before trying again.
+Next time: Try the above fix(es) and leave the Arduino unplugged for a while before trying again.
 
 Error: something else
 Cause: sometimes random stuff just happens with cheap hardware like this. It's usually not unfixable/permanent though. Maybe it was your fault, maybe it wasn't.

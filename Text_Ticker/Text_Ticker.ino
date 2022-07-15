@@ -101,7 +101,7 @@ char server[] = "www.jacobtepperman.com";
 WiFiClient client;
 
 void setup() {
-  clearLEDs()
+  clearLEDs();
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
      FastLED.addLeds<LED_TYPE, 13, COLOR_ORDER>(leds[0], NUM_LEDS).setCorrection( TypicalLEDStrip );
