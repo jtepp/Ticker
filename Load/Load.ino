@@ -1,25 +1,65 @@
 #include <FastLED.h>
 #include <WiFiNINA.h>
-#include <String.h>
+#include "arduino_secrets.h"
+/* TEXT TICKER
+ * by Jacob Tepperman - July 2022
+ * 
+ * DESCRIPTION:
+ * This is the first program I made for my ticker.
+ * It shows text that scrolls across the LEDs and 
+ * can be set to show static text or use a preset
+ * mode on the text conversion server
+ * 
+ * SERVER MODES:
+ * - text:
+ *   pass a q value of your custom text
+ *   
+ * - stocks:
+ *   pass a q value of a comma separated list of
+ *   desired symbols
+ *   
+ * - waves:
+ *   pass a q value of "filled" to show filled
+ *   waves, or no value for line waves
+ * 
+ * CONSTANTS:
+ * - NUM_LEDS: # of LEDs on your light strip to work with
+ * 
+ * - NUM_STRIPS: # of LED strips you're using. The server only has letter
+ *               conversion compatible with 5 strips so unless you're making your
+ *               own conversion server, use 5 strips
+ * 
+ * - PT_REFRESH: # of complete passthroughs (text getting to the end of the strip)
+ *               between each refresh of the message to display on the ticker
+ *
+ * - FPS: # of times the strip updates (scrolls) per second. It's implemented below in a delay(1000/FPS)
+ *        so feel free to replace that with just a delay if you want
+ *
+ * - BRIGHTNESS: brightness of the LEDs
+ * 
+ * IMPORTANT VARIABLES:
+ * - on: the color you want the message to be shown in
+ * 
+ * - refresh: whether or not you want the text to update periodically
+ */
 
+#define MSG_LENGTH 200
+ 
 #define NUM_LEDS 100
 #define NUM_STRIPS 5
-#define MSG_LENGTH 200
 
 #define PT_REFRESH 4
 #define FPS 15
-
+#define BRIGHTNESS 60
 
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
-#define BRIGHTNESS 60
 
 CRGB on = CRGB::Green;
 
 bool refresh = false;
 
-
-
+/**********stuff not to change below**********/
 
 CRGB leds[NUM_STRIPS][NUM_LEDS];
 byte message[NUM_STRIPS][MSG_LENGTH];
@@ -31,9 +71,6 @@ int realLength = 0;
 
 bool run = true;
 bool canMakeRequest = true;
-
-char ssid[] = "TeppermanFamily";
-char pass[] = "0110202165";
 
 int status = WL_IDLE_STATUS;
 int counter = 0;
@@ -70,10 +107,7 @@ void loop() {
   if (run) {
 
   if (canMakeRequest) {
-//      makeHTTPRequest("stocks","");
-    makeHTTPRequest("text","This%20was%20a%20great%20idea");
-//      makeHTTPRequest("waves","");
-//      makeHTTPRequest("text","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    action();
     canMakeRequest = false;
   }
     
@@ -148,14 +182,21 @@ if (run) {
 
   if (counter % min(realLength, MSG_LENGTH) == 0 && refresh) { // at the start
       if (passThroughs == PT_REFRESH) {
-        makeHTTPRequest("text", "NEW MESSAGE");
-//        makeHTTPRequest("stocks","");
-//          makeHTTPRequest("waves","");
+        action();
         passThroughs = 0;
       }
       passThroughs++;
     }
 }
+
+
+  void action() {
+    //      makeHTTPRequest("stocks","GME,TSLA,TLRY");
+    makeHTTPRequest("text","This%20was%20a%20great%20idea");
+//      makeHTTPRequest("waves","");
+//      makeHTTPRequest("text","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+}
+
 
   void scrub() {
     for (int i=0; i<NUM_STRIPS; i++) {
