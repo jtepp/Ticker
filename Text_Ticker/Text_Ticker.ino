@@ -141,7 +141,7 @@ void loop() {
               if (innerIndex>realLength && c == '1') {
                 realLength = innerIndex; // find the deepest '1'
                 }
-
+    }
     switch(c) {
         case '0': 
 
@@ -164,7 +164,6 @@ void loop() {
   }
   
   }
-
   scroll();
   FastLED.show();
 
@@ -191,8 +190,6 @@ if (run) {
       }
       passThroughs++;
     }
-}
-
 }
   void action() {
     //      makeHTTPRequest("stocks","GME,TSLA,TLRY");
