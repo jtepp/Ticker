@@ -9,6 +9,10 @@
 #define NUM_LEDS 30
 #define NUM_STRIPS 5
 
+#define NUM_BALLS 5
+
+CRGB leds[NUM_STRIPS][NUM_LEDS];
+
 struct Point {
   int x;
   int y;  
@@ -16,14 +20,32 @@ struct Point {
 typedef struct Point point;
 
 class Ball {
+  private:
+  bool overflowX = false;
   public:
   int x_vel = 1;
   int y_vel = 1;
   point p = {0,0};
-    Ball() {}
+  CRGB on = CRGB(255,255,255);
+    Ball(CRGB sOn) {
+        on = sOn;
+      }
+    Ball(CRGB sOn, int sX, int sY) {
+      on = sOn;
+      p.x = sX;
+      p.y = sY;
+    }
+    Ball(CRGB sOn, int sX, int sY, int xV, int yV) {
+      on = sOn;
+      p.x = sX;
+      p.y = sY;
+      x_vel = xV;
+      y_vel = yV;
+    }
 
   void move() {
     if ((p.x == NUM_LEDS-1 && x_vel > 0) || (p.x == 0 && x_vel < 0)) {
+        if (!overflowX)
         x_vel *= -1;
       }
 
@@ -33,17 +55,31 @@ class Ball {
 
     p.x += x_vel;
     p.y += y_vel;
-  }  
+    
+    if (overflowX)
+        p.x %= NUM_LEDS;
+
+  }
+
+  void show() {
+    leds[p.y][p.x] = on;
+  }
+
+  void allowOverflowX() {
+      overflowX = true;
+    }
   
 };
 
-CRGB on = CRGB(255,0,0);
 CRGB off = CRGB(0,0,0);
-
-Ball b = Ball();
-
-CRGB leds[NUM_STRIPS][NUM_LEDS];
-
+Ball balls[NUM_BALLS] = {
+    Ball(CRGB::Red),
+    Ball(CRGB::Blue, 3, 1),
+    Ball(CRGB::Green, 10, 3, -1, 1),
+    Ball(CRGB::Orange, NUM_LEDS-1, 4, 1, 1),
+    Ball(CRGB::Purple, 20, 2, 1, -1)
+  };
+  
 void setup() {
    clearLEDs();
   FastLED.addLeds<LED_TYPE, 13, COLOR_ORDER>(leds[0], NUM_LEDS).setCorrection( TypicalLEDStrip );
@@ -53,13 +89,19 @@ void setup() {
   FastLED.addLeds<LED_TYPE, 6, COLOR_ORDER>(leds[4], NUM_LEDS).setCorrection( TypicalLEDStrip );
   FastLED.setBrightness(  BRIGHTNESS );
   FastLED.show();
+
+  balls[0].allowOverflowX();
 }
 
 void loop() {
-  leds[b.p.y][b.p.x] = on;
+  for (Ball b : balls){
+   b.show();
+  }
   FastLED.show();
   clearLEDs();
-  b.move();
+  for (int i=0; i<NUM_BALLS; i++){
+   balls[i].move();
+  }
   delay(1000/FPS);
 }
 
