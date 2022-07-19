@@ -56,8 +56,12 @@ class Ball {
     p.x += x_vel;
     p.y += y_vel;
     
-    if (overflowX)
+    if (overflowX) {
         p.x %= NUM_LEDS;
+        if (p.x < 0) {
+          p.x = NUM_LEDS-1;  
+        }
+    }
 
   }
 
