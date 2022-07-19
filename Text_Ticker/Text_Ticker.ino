@@ -60,7 +60,7 @@
  * - refresh: whether or not you want the text to update periodically
  */
 
-#define MSG_LENGTH 200
+#define MSG_LENGTH 100
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
  
@@ -204,7 +204,7 @@ if (run) {
       for (int j=1; j<NUM_LEDS; j++) { // the LEDs move left
           leds[i][j-1] = leds[i][j];
         }
-        leds[i][NUM_LEDS-1] = message[i][counter % min(realLength, MSG_LENGTH)] == 0 ? CRGB(0,0,0) : on; // last led is first of past matrix
+        leds[i][NUM_LEDS-1] = message[i][counter % min(realLength + 5, MSG_LENGTH)] == 0 ? CRGB(0,0,0) : on; // last led is first of past matrix
     }
     delay(1000/FPS);
   }
