@@ -11,7 +11,9 @@
 
 #define RAIN_F 5
 #define REAL_GREENS 5
+
 CRGB white = CRGB(100,100,100);
+CRGB off = CRGB(0,0,0);
 
 
 CRGB greens[] = {
@@ -25,9 +27,9 @@ CRGB greens[] = {
    CRGB(0,30,0),
    CRGB(0,20,0),
    CRGB(0,10,0),
+   off
   };
-  
-CRGB off = CRGB(0,0,0);
+ 
 
 CRGB leds[NUM_STRIPS][NUM_LEDS];
 byte states[NUM_LEDS];
@@ -79,7 +81,7 @@ void scroll() {
             case 1: // white
               states[i] += 1 + round(randomFloat()*(REAL_GREENS));
             break;
-            case 11:
+            case 12:
               states[i] = 0;
               break;
             default: // all others (white, first fade, greens) are just state changes of 2-9
@@ -99,7 +101,7 @@ CRGB colorFromState(byte state) {
       case 7:
       case 8:
       case 9:
-      case 10:
+      case 11:
         return greens[state]; // fade tail
       default:
         return greens[(int) (randomFloat()*REAL_GREENS) + 1];     
