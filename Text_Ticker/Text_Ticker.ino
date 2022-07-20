@@ -78,14 +78,20 @@ bool refresh = false;
 /**********stuff not to change below**********/
 
 CRGB leds[NUM_STRIPS][NUM_LEDS];
-byte message[NUM_STRIPS][MSG_LENGTH];
+byte message[NUM_STRIPS][MSG_LENGTH] = {
+  {0,0,0,0,0,1,0,1,0,1,1,1,0,1,0,0,0,1,0,0,0,0,1,1,0},
+  {0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1},
+  {0,0,0,0,0,1,1,1,0,1,1,1,0,1,0,0,0,1,0,0,0,1,0,0,1},
+  {0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1},
+  {0,0,0,0,0,1,0,1,0,1,1,1,0,1,1,1,0,1,1,1,0,0,1,1,0}
+  };
 
 
 int innerIndex = -1;
 int outerIndex = 0;
-int realLength = 0;
+int realLength = 25;
 
-bool run = true;
+bool run = false;
 bool canMakeRequest = true;
 
 int status = WL_IDLE_STATUS;
@@ -109,13 +115,14 @@ void setup() {
   FastLED.show();
   Serial.begin(9600);
 
-  while (status != WL_CONNECTED) {
+  while (run && status != WL_CONNECTED) {
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(ssid);
     status = WiFi.begin(ssid, pass);
     delay(6000);
   }
-  
+
+  if (run)
   Serial.println("Connected to wifi");
 }
 
@@ -161,7 +168,7 @@ void loop() {
   
   }
   scroll();
-  FastLED.show();
+  FastLED[0].showLeds();
 
   
 if (run) {
@@ -199,7 +206,9 @@ if (run) {
     for (int i=0; i<NUM_STRIPS; i++) {
       for (int j=1; j<NUM_LEDS; j++) { // the LEDs move left
           leds[i][j-1] = leds[i][j];
+          
         }
+        Serial.println(message[i][counter % min(realLength + 5, MSG_LENGTH)]);
         leds[i][NUM_LEDS-1] = message[i][counter % min(realLength + 5, MSG_LENGTH)] == 0 ? CRGB(0,0,0) : on; // last led is first of past matrix
     }
     delay(1000/FPS);
@@ -231,8 +240,8 @@ void clearLEDs() {
       for (int j=0; j<NUM_LEDS; j++) {
           leds[i][j] = 0;
       }
-      for (int j=0; j<MSG_LENGTH; j++) {
-          message[i][j] = 0;
-        }
+//      for (int j=0; j<MSG_LENGTH; j++) {
+//          message[i][j] = 0;
+//        }
     }
   }
