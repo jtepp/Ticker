@@ -28,10 +28,6 @@
  * - stocks:
  *   pass a q value of a comma separated list of
  *   desired symbols
- *   
- * - waves:
- *   pass a q value of "filled" to show filled
- *   waves, or no value for line waves
  * 
  * CONSTANTS:
  * - NUM_LEDS: # of LEDs on your light strip to work with
