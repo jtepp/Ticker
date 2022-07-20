@@ -31,6 +31,12 @@ complete, you are ready to run the ticker.
 Fix: Lower NUM_LEDS so that each strip powers less LEDs and uses less power.
 **Next time:** Use the 3.3V pin instead of the 5V pin. This will result in darker lights, but you can try a higher BRIGHTNESS constant value. Buy a power adaptor. Arduino recommends a 7-12V input, and I would recommend around 60W for a 200*5 LED ticker. (W = V*A so 60W @ 12V = 5A)
 
+**Error:** `No device found`
+**Cause:** You tried uploading without plugging the arduino in.
+**Fix:** Plug the arduino in and re-upload.
+**Next time:** Check all connections before uploading I guess?
+
+
 **Error:** won't compile when adding more than one LED strip
 **Cause:** Honestly no idea, maybe the same thing as the first error
 **Fix:** Not sure... maybe try same solution as the first error, and also try compiling with a low NUM_LEDS and compiling with/without the Arduino plugged in
