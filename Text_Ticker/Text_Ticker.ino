@@ -69,7 +69,7 @@
 
 #define PT_REFRESH 4
 #define FPS 15
-#define BRIGHTNESS 60
+#define BRIGHTNESS 255
 #define MODE "text"
 #define Q "This%20was%20a%20great%20idea"
 
