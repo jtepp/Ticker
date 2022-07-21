@@ -20,6 +20,12 @@
  * IMPORTANT VARIABLES, and change any of those values
  * to make the ticker display whatever you desire.
  * 
+ * For this program, the onboard LED will turn on while
+ * the board connects to wifi. The TX LED will flash
+ * whenever the status updates (around every 6 seconds)
+ * and then once a wifi connection has been established,
+ * the onboard LED will turn off.
+ * 
  * 
  * SERVER MODES:
  * - text:
