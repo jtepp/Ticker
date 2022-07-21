@@ -26,6 +26,12 @@
  * and then once a wifi connection has been established,
  * the onboard LED will turn off.
  * 
+ * In addition, you will need to either create local
+ * char ssid[] and char pass[] variables with your
+ * WiFi network name and password, or make an
+ * arduino_secrets.h file which has those variables
+ * and is saved in the same folder as this program.
+ * 
  * 
  * SERVER MODES:
  * - text:
