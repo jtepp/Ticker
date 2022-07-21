@@ -127,7 +127,6 @@ void setup() {
      FastLED.addLeds<LED_TYPE, 11, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.addLeds<LED_TYPE, 10, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.addLeds<LED_TYPE, 6, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
-     FastLED.setBrightness(  BRIGHTNESS );
   FastLED.show();
   Serial.begin(9600);
 
@@ -220,7 +219,7 @@ if (run) {
   void scroll() {
     for (int i=0; i<NUM_STRIPS; i++) {
         shift(leds, message[wipeOrder[i]]);
-        FastLED[wipeOrder[i]].showLeds();
+        FastLED[wipeOrder[i]].showLeds(BRIGHTNESS);
     }
     delay(1000/FPS);
   }
