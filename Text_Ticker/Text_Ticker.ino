@@ -75,37 +75,40 @@
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
  
-#define NUM_LEDS 50
+#define NUM_LEDS 30
 #define NUM_STRIPS 5
 
-#define PT_REFRESH 4
-#define FPS 10
-#define BRIGHTNESS 255
-#define MODE "text"
-#define Q "This%20was%20a%20great%20idea"
+#define PT_REFRESH 0
+#define FPS 15
+#define BRIGHTNESS 100
+#define MODE "sports"
+#define Q "mlb"
 
 
 
 CRGB on = CRGB::Green;
 
-bool refresh = false;
+bool refresh = true;
 
 /**********stuff not to change below**********/
 byte wipeOrder[NUM_STRIPS] = {0,4,1,3,2}; // order to load strips in. used to stop it from looking like it wipes down every refresh
 
 CRGB leds[NUM_LEDS];
-byte message[NUM_STRIPS][MSG_LENGTH] = {
-  {0,0,0,0,0,1,0,1,0,1,1,1,0,1,0,0,0,1,0,0,0,0,1,1,0},
-  {0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1},
-  {0,0,0,0,0,1,1,1,0,1,1,1,0,1,0,0,0,1,0,0,0,1,0,0,1},
-  {0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1},
-  {0,0,0,0,0,1,0,1,0,1,1,1,0,1,1,1,0,1,1,1,0,0,1,1,0}
-  };
+byte message[NUM_STRIPS][MSG_LENGTH];
+//= {
+//  {0,0,0,0,0,1,0,1,0,1,1,1,0,1,0,0,0,1,0,0,0,0,1,1,0},
+//  {0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1},
+//  {0,0,0,0,0,1,1,1,0,1,1,1,0,1,0,0,0,1,0,0,0,1,0,0,1},
+//  {0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1},
+//  {0,0,0,0,0,1,0,1,0,1,1,1,0,1,1,1,0,1,1,1,0,0,1,1,0}
+//  };
 
 
 int innerIndex = -1;
 int outerIndex = 0;
 int realLength = 25;
+
+int page = 0;
 
 bool run = true;
 bool canMakeRequest = true;
@@ -127,7 +130,6 @@ void setup() {
      FastLED.addLeds<LED_TYPE, 11, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.addLeds<LED_TYPE, 10, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.addLeds<LED_TYPE, 6, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
-     FastLED.setBrightness(  BRIGHTNESS );
   FastLED.show();
   Serial.begin(9600);
 
@@ -138,8 +140,8 @@ void setup() {
     delay(6000);
   }
 
-  if (run)
-  Serial.println("Connected to wifi");
+  if (run) {
+  }
 }
 
 void loop() {
@@ -184,7 +186,6 @@ void loop() {
   
   }
   scroll();
-
   
 if (run) {
   // if the server's disconnected, stop the client:
@@ -201,10 +202,12 @@ if (run) {
   counter++;
 
 
-  if (counter % min(realLength, MSG_LENGTH) == 0 && refresh) { // at each start
-      if (passThroughs == PT_REFRESH) {
+  if ((counter + NUM_LEDS) % min(realLength, MSG_LENGTH) == 0 && refresh) { // at each start
+      if (passThroughs >= PT_REFRESH) {
+//        page++;
         action();
         passThroughs = 0;
+        counter = 0;
       }
       passThroughs++;
     }
@@ -220,9 +223,10 @@ if (run) {
   void scroll() {
     for (int i=0; i<NUM_STRIPS; i++) {
         shift(leds, message[wipeOrder[i]]);
-        FastLED[wipeOrder[i]].showLeds();
+        FastLED[wipeOrder[i]].showLeds(BRIGHTNESS);
     }
     delay(1000/FPS);
+//    Serial.println(min(realLength + 5, MSG_LENGTH));
   }
 
   void shift(CRGB* arr, byte* msg) {
@@ -238,11 +242,11 @@ if (run) {
       outerIndex = 0;
       realLength = 0;
       run = true;
-
     String intro = "GET /.netlify/functions/ticker?mode=";
     String query = "&q=";
+    String pg = "&page=" ;
     String outro = " HTTP/1.1";
-    String requestString = intro + mode + query + q + outro;
+    String requestString = intro + mode + query + q + pg + page + outro;
     client.println(requestString);
     client.println("Host: www.jacobtepperman.com");
     client.println("Connection: close");
