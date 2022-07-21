@@ -51,20 +51,23 @@
  *      symbols, just google [symbol name] URL-encoded
  * 
  * IMPORTANT VARIABLES:
+ * - run: a true/false value that when false makes the ticker display a preset "HELLO" text,
+ *        and when true makes the ticker display the desired web-fetched text
+ * 
  * - on: the color you want the message to be shown in
  * 
  * - refresh: whether or not you want the text to update periodically
  */
 
-#define MSG_LENGTH 100
+#define MSG_LENGTH 600
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
  
-#define NUM_LEDS 100
+#define NUM_LEDS 50
 #define NUM_STRIPS 5
 
 #define PT_REFRESH 4
-#define FPS 15
+#define FPS 10
 #define BRIGHTNESS 255
 #define MODE "text"
 #define Q "This%20was%20a%20great%20idea"
@@ -77,7 +80,7 @@ bool refresh = false;
 
 /**********stuff not to change below**********/
 
-CRGB leds[NUM_STRIPS][NUM_LEDS];
+CRGB leds[NUM_LEDS];
 byte message[NUM_STRIPS][MSG_LENGTH] = {
   {0,0,0,0,0,1,0,1,0,1,1,1,0,1,0,0,0,1,0,0,0,0,1,1,0},
   {0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1},
@@ -91,7 +94,7 @@ int innerIndex = -1;
 int outerIndex = 0;
 int realLength = 25;
 
-bool run = false;
+bool run = true;
 bool canMakeRequest = true;
 
 int status = WL_IDLE_STATUS;
@@ -106,11 +109,11 @@ void setup() {
   clearLEDs();
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
-     FastLED.addLeds<LED_TYPE, 13, COLOR_ORDER>(leds[0], NUM_LEDS).setCorrection( TypicalLEDStrip );
-     FastLED.addLeds<LED_TYPE, 12, COLOR_ORDER>(leds[1], NUM_LEDS).setCorrection( TypicalLEDStrip );
-     FastLED.addLeds<LED_TYPE, 11, COLOR_ORDER>(leds[2], NUM_LEDS).setCorrection( TypicalLEDStrip );
-     FastLED.addLeds<LED_TYPE, 10, COLOR_ORDER>(leds[3], NUM_LEDS).setCorrection( TypicalLEDStrip );
-     FastLED.addLeds<LED_TYPE, 6, COLOR_ORDER>(leds[4], NUM_LEDS).setCorrection( TypicalLEDStrip );
+     FastLED.addLeds<LED_TYPE, 13, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
+     FastLED.addLeds<LED_TYPE, 12, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
+     FastLED.addLeds<LED_TYPE, 11, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
+     FastLED.addLeds<LED_TYPE, 10, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
+     FastLED.addLeds<LED_TYPE, 6, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
      FastLED.setBrightness(  BRIGHTNESS );
   FastLED.show();
   Serial.begin(9600);
@@ -168,7 +171,6 @@ void loop() {
   
   }
   scroll();
-  FastLED[0].showLeds();
 
   
 if (run) {
@@ -204,15 +206,17 @@ if (run) {
 
   void scroll() {
     for (int i=0; i<NUM_STRIPS; i++) {
-      for (int j=1; j<NUM_LEDS; j++) { // the LEDs move left
-          leds[i][j-1] = leds[i][j];
-          
-        }
-        Serial.println(message[i][counter % min(realLength + 5, MSG_LENGTH)]);
-        leds[i][NUM_LEDS-1] = message[i][counter % min(realLength + 5, MSG_LENGTH)] == 0 ? CRGB(0,0,0) : on; // last led is first of past matrix
+        shift(leds, message[i]);
+        FastLED[i].showLeds();
     }
     delay(1000/FPS);
   }
+
+  void shift(CRGB* arr, byte* msg) {
+    for (int j=0; j<NUM_LEDS; j++) { // fill LEDs based on message, using counter as an offset
+          arr[j] = msg[(counter + j) % min(realLength + 5, MSG_LENGTH)] == 0 ? CRGB(0,0,0) : on;
+        }
+    }
 
   void makeHTTPRequest(String mode, String q) {
     if (client.connect(server, 80)) {
@@ -236,12 +240,14 @@ if (run) {
 
     
 void clearLEDs() {
-  for (int i=0; i<NUM_STRIPS; i++) {
-      for (int j=0; j<NUM_LEDS; j++) {
-          leds[i][j] = 0;
+  for (int j=0; j<NUM_LEDS; j++) {
+          leds[j] = 0;
       }
-//      for (int j=0; j<MSG_LENGTH; j++) {
-//          message[i][j] = 0;
-//        }
+  for (int i=0; i<NUM_STRIPS; i++) {
+      if (run) {
+        for (int j=0; j<MSG_LENGTH; j++) {
+            message[i][j] = 0;
+          }
+      }
     }
   }
