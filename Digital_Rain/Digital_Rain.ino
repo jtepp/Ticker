@@ -1,4 +1,32 @@
 #include <FastLED.h>
+/* DIGITAL RAIN
+ * by Jacob Tepperman - July 2022
+ * 
+ * DESCRIPTION:
+ * This is the second program I made for my ticker.
+ * It shows a digital rain effect text that scrolls
+ * across the LEDs vertically and has minimal customization.
+ * 
+ * 
+ * CONSTANTS:
+ * - NUM_LEDS: # of LEDs on your light strip to work with
+ * 
+ * - NUM_STRIPS: # of LED strips you're using. The server only has letter
+ *               conversion compatible with 5 strips so unless you're making your
+ *               own conversion server, use 5 strips
+ *
+ * - FPS: # of times the strip updates (scrolls) per second. It's implemented below in a delay(1000/FPS)
+ *        so feel free to replace that with just a delay if you want
+ *
+ * - BRIGHTNESS: brightness of the LEDs 0-255
+ * 
+ * - RAIN_F: a frequency parameter for how often new 'raindrops' are spawned. A setting of 1 means
+ *           constant rain, and a higher number means more gaps between the rain. It's a pretty
+ *           poor implementation but it determines whether or not to spawn a raindrop by generating 
+ *           a random number and then checking to see if it is divisible by RAIN_F. Every number is 
+ *           divisble by 1, but only half of numbers are divisible by 2, a third by 3, etc.
+ *           (C++ is bad with randomness... and I'm lazy)
+ */
 
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
@@ -16,7 +44,7 @@ CRGB white = CRGB(100,100,100);
 CRGB off = CRGB(0,0,0);
 
 
-CRGB greens[] = {
+CRGB greens[] = { // rain
     white,
    CRGB(0,200,0),
    CRGB(0,180,0),

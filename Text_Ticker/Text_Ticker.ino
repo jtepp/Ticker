@@ -42,7 +42,7 @@
  * - FPS: # of times the strip updates (scrolls) per second. It's implemented below in a delay(1000/FPS)
  *        so feel free to replace that with just a delay if you want
  *
- * - BRIGHTNESS: brightness of the LEDs
+ * - BRIGHTNESS: brightness of the LEDs 0-255
  * 
  * - MODE: The desired server mode. Options are listed above the CONSTANTS section
  * 
