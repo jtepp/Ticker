@@ -79,6 +79,7 @@ CRGB on = CRGB::Green;
 bool refresh = false;
 
 /**********stuff not to change below**********/
+byte wipeOrder[NUM_STRIPS] = {0,4,1,3,2}; // order to load strips in. used to stop it from looking like it wipes down every refresh
 
 CRGB leds[NUM_LEDS];
 byte message[NUM_STRIPS][MSG_LENGTH] = {
@@ -206,8 +207,8 @@ if (run) {
 
   void scroll() {
     for (int i=0; i<NUM_STRIPS; i++) {
-        shift(leds, message[i]);
-        FastLED[i].showLeds();
+        shift(leds, message[wipeOrder[i]]);
+        FastLED[wipeOrder[i]].showLeds();
     }
     delay(1000/FPS);
   }

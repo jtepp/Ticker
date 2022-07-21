@@ -1,5 +1,42 @@
 #include <FastLED.h>
-
+/* BOUNCE
+ * by Jacob Tepperman - July 2022
+ * 
+ * DESCRIPTION:
+ * This is the third program I made for my ticker.
+ * It shows balls/dots that bounce around the edges
+ * of the tickers, or can be set to wrap around them.
+ * 
+ * 
+ * OPERATION:
+ * Fill the balls array with however many balls you
+ * want to display, making sure to update NUM_BALLS
+ * as well. Every constructor for the Ball class
+ * requires the CRGB color as the first parameter.
+ * You have the option of only including that to
+ * create a default speed ball, starting at 0,0,
+ * or you can also specify the x- and y- velocities.
+ * I would suggest only using an absolute value of 1,
+ * with your desired positive/negative sign. To make
+ * a ball wrap around the horizontal edge, include
+ * balls[##BALL-INDEX##].allowOverflowX(); in setup().
+ * 
+ * 
+ * CONSTANTS:
+ * - NUM_LEDS: # of LEDs on your light strip to work with
+ * 
+ * - NUM_STRIPS: # of LED strips you're using. The server only has letter
+ *               conversion compatible with 5 strips so unless you're making your
+ *               own conversion server, use 5 strips
+ *               
+ * - NUM_BALLS: # of balls in your balls array
+ *
+ * - FPS: # of times the strip updates (scrolls) per second. It's implemented below in a delay(1000/FPS)
+ *        so feel free to replace that with just a delay if you want
+ *
+ * - BRIGHTNESS: brightness of the LEDs 0-255
+ */
+ 
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
 
@@ -13,7 +50,7 @@
 
 CRGB leds[NUM_STRIPS][NUM_LEDS];
 
-struct Point {
+struct Point { // I'm aware this is unnecessary
   int x;
   int y;  
 };

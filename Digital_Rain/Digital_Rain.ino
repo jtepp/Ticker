@@ -7,6 +7,8 @@
  * It shows a digital rain effect text that scrolls
  * across the LEDs vertically and has minimal customization.
  * 
+ * OPERATION:
+ * Nothing special, just plug in and press upload.
  * 
  * CONSTANTS:
  * - NUM_LEDS: # of LEDs on your light strip to work with
