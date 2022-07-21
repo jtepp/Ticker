@@ -40,6 +40,13 @@
  * - stocks:
  *   pass a q value of a comma separated list of
  *   desired symbols
+ *   
+ * - sports:
+ *   pass a q value for the league for which you
+ *   want to see scores. Below is the list of
+ *   leagues I have added so far:
+ *      - mlb
+ *      - end of list
  * 
  * CONSTANTS:
  * - NUM_LEDS: # of LEDs on your light strip to work with
