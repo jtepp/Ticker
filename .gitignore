@@ -31,3 +31,4 @@
 *.out
 *.app
 Load/arduino_secrets.h
+*.pxd
