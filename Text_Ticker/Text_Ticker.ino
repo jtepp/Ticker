@@ -91,6 +91,8 @@
 #define MODE "sports"
 #define Q "mlb"
 
+int tail = floor(NUM_LEDS/2.0);
+
 
 
 CRGB on = CRGB::Green;
@@ -190,7 +192,6 @@ void loop() {
   
 
   }
-  
   }
   scroll();
   
@@ -209,7 +210,7 @@ if (run) {
   counter++;
 
 
-  if ((counter + NUM_LEDS) % min(realLength, MSG_LENGTH) == 0 && refresh) { // at each start
+  if ((counter + NUM_LEDS) % min(realLength + tail, MSG_LENGTH) == 0 && refresh) { // at each start
       if (passThroughs >= PT_REFRESH) {
 //        page++;
         action();
@@ -238,7 +239,7 @@ if (run) {
 
   void shift(CRGB* arr, byte* msg) {
     for (int j=0; j<NUM_LEDS; j++) { // fill LEDs based on message, using counter as an offset
-          arr[j] = msg[(counter + j) % min(realLength + 5, MSG_LENGTH)] == 0 ? CRGB(0,0,0) : on;
+          arr[j] = msg[(counter + j) % min(realLength + tail, MSG_LENGTH)] == 0 ? CRGB(0,0,0) : on;
         }
     }
 
