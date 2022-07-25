@@ -85,13 +85,13 @@
 #define NUM_LEDS 30
 #define NUM_STRIPS 5
 
-#define PT_REFRESH 0
+#define PT_REFRESH 2
 #define FPS 15
 #define BRIGHTNESS 100
 #define MODE "sports"
-#define Q "mlb"
+#define Q "mlb"//"It%20stopped%20working"
 
-int tail = floor(NUM_LEDS/2.0);
+int tail = 30;
 
 
 
@@ -257,6 +257,7 @@ if (run) {
     String requestString = intro + mode + query + q + pg + page + outro;
     client.println(requestString);
     client.println("Host: www.jacobtepperman.com");
+    delay(1000);
     client.println("Connection: close");
     client.println();
     digitalWrite(LED_BUILTIN, LOW);
