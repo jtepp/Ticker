@@ -41,6 +41,10 @@
  *   pass a q value of a comma separated list of
  *   desired symbols
  *   
+ * - time:
+ *   pass a q value for the GMT offset of your
+ *   timezone (q=-4 for EDT)
+ *   
  * - sports:
  *   pass a q value for the league for which you
  *   want to see scores. Below is the list of
@@ -85,13 +89,13 @@
 #define NUM_LEDS 30
 #define NUM_STRIPS 5
 
-#define PT_REFRESH 2
+#define PT_REFRESH 0
 #define FPS 15
 #define BRIGHTNESS 100
 #define MODE "sports"
 #define Q "mlb"//"It%20stopped%20working"
 
-int tail = 30;
+int tail = NUM_LEDS;
 
 
 
@@ -256,9 +260,11 @@ if (run) {
     String outro = " HTTP/1.1";
     String requestString = intro + mode + query + q + pg + page + outro;
     client.println(requestString);
+//    delay(3000);
     client.println("Host: www.jacobtepperman.com");
-    delay(1000);
+//    delay(3000);
     client.println("Connection: close");
+//    delay(3000);
     client.println();
     digitalWrite(LED_BUILTIN, LOW);
   }
